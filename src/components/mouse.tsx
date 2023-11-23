@@ -1,7 +1,6 @@
-"use client"
 import { Sparkle } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { v4 as uuid } from "uuid"
+import { v4 as uuid } from "uuid";
 
 interface Position {
   x: number;
@@ -157,7 +156,7 @@ export default function Mouse() {
       window.removeEventListener("mousemove", handleMouseMove);
       document.body.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [lastStar, adjustLastMousePosition]);
+  }, [lastStar]);
 
   return <div>{glowPoints}</div>;
-};
+}
