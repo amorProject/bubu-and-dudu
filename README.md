@@ -1,15 +1,13 @@
 # BUBU AND DUDU
 
-## [✓]
-## [-]
-## [X]
-
-## TODO
+## [✓] Completed
 #### [✓] Downloading
-#### [-] Different Displaying
 #### [✓] Converting to Database
 #### [✓] Authentication
+## [-] Working On
+#### [-] Different Displaying
 #### [-] Adding Your Own Images
+## [X] Todo
 #### [X] Add More Themes
 #### [X] Add Custom Themes
 #### [X] Wallpapers
