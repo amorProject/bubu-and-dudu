@@ -11,16 +11,6 @@ import { SessionProvider } from "next-auth/react";
 import { Profile } from '@/lib/auth'
 import { Toaster } from '@/components/ui/toaster'
 
-export const metadata: Metadata = {
-  title: 'Bubu & Dudu Time',
-  description: 'Get matching profile pictures for you and your partner(s) :D',
-  icons: {
-    icon: '/bubu.png',
-    shortcut: '/bubu.png',
-    apple: '/bubu.png',
-  }
-}
-
 export default function RootLayout({
   children,
 }: {
