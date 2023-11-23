@@ -64,21 +64,3 @@ export async function POST(request: Request) {
     data: newPost ? newPost : null,
   })
 }
-
-export async function PUT(request: NextRequest) {
-  const res = await request.json()
-  const data = await prisma.post.update({
-    data: {
-      likes: {
-        increment: 1
-      }
-    },
-    where: {
-      id: res.id
-    }
-  })
-
-  return Response.json({
-    totalLikes: data.likes
-  })
-}
