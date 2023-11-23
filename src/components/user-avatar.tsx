@@ -26,7 +26,7 @@ export default function UserAvatar({user, i, selected, setUser}: Props) {
     setTotalDownloads(selected.images.map((img) => img.downloads))
     if (!user) return
     setLiked(selected.images.map((img) => user?.likedImages.filter(likedImg => likedImg.id === img.id).length >= 1 ? true : false))
-  }, [selected])
+  }, [selected, user])
 
   async function saveFile() {
     const image = selected.images[i]

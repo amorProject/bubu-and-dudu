@@ -157,7 +157,7 @@ export default function Mouse() {
       window.removeEventListener("mousemove", handleMouseMove);
       document.body.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [lastStar]);
+  }, [lastStar, adjustLastMousePosition]);
 
   return <div>{glowPoints}</div>;
 };

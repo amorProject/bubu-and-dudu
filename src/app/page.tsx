@@ -36,10 +36,10 @@ export default function Home() {
       });
 
     async function getImage() {
-      const randomImage = await fetch(`/api/post/random?filters=${selected.map(s => s.id).join(',')}`).then((res) => res.json());
+      const randomImage = await fetch(`/api/post/random`).then((res) => res.json());
       setCurrentImage(randomImage);
 
-      const totalImages = await fetch(`/api/post/count?filters=${selected.map(s => s.id).join(',')}`).then((res) => res.json());
+      const totalImages = await fetch(`/api/post/count`).then((res) => res.json());
       setTotalImages({ postCount: totalImages.postCount, filteredPostCount: totalImages.postCount });
     }
     getImage();

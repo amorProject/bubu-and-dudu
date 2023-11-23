@@ -14,7 +14,7 @@ interface Props {
 export default function ImageDropzone({selectedImages, setSelectedImages}:Props) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setSelectedImages((prevImages: any) => [...prevImages, ...acceptedFiles]);
-  }, []);
+  }, [setSelectedImages]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -94,7 +94,8 @@ export default function ImageDropzone({selectedImages, setSelectedImages}:Props)
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <Image
+                          <img
+                            alt={`Image ${index}`}
                             image={image}
                             index={index}
                             handleDelete={handleDelete}
@@ -110,9 +111,7 @@ export default function ImageDropzone({selectedImages, setSelectedImages}:Props)
           </DragDropContext>
         ) : (
           <p className="flex flex-col justify-center items-center">
-            <span>
-              Drag 'n' drop some files here
-            </span>
+            Drag &apos;n&apos; drop some files here
           </p>
         )}
       </div>

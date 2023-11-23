@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
 import { X } from "lucide-react";
-
+import { useRef, useState, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Command,
@@ -17,15 +16,15 @@ export function MultiSelect(
 {selected, setSelected, categories, placeholder, count, className}
 :
 {selected: any, setSelected: any, categories: Category[], placeholder: string, count?: number, className?: string}) {
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const [open, setOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
-  const handleUnselect = React.useCallback((category: Category) => {
+  const handleUnselect = useCallback((category: Category) => {
     setSelected((prev: any) => prev.filter((s:any) => s.id !== category.id));
-  }, []);
+  }, [setSelected]);
 
-  const handleKeyDown = React.useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     const input = inputRef.current
     if (input) {
       if (e.key === "Delete" || e.key === "Backspace") {
@@ -41,7 +40,7 @@ export function MultiSelect(
         input.blur();
       }
     }
-  }, []);
+  }, [setSelected]);
 
   const selectables = categories.filter(category => !selected.includes(category));
 
