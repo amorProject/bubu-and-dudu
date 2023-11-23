@@ -8,8 +8,9 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { Button } from "./ui/button"
+import Image from "next/image"
 
-export default function Image({image, index, handleDelete}:{image: File, index: number, handleDelete: (index: number) => void}) {
+export default function ImageContextMenu({image, index, handleDelete}:{image: File, index: number, handleDelete: (index: number) => void}) {
   return (
     <ContextMenu modal>
       <ContextMenuTrigger>
@@ -41,7 +42,7 @@ export default function Image({image, index, handleDelete}:{image: File, index: 
 
 function ImageTrigger({image, index, handleDelete}:{image: File, index: number, handleDelete: (index: number) => void}) {
   return (
-    <img
+    <Image
       onClick={() => handleDelete(index)}
       key={index}
       src={URL.createObjectURL(image)}

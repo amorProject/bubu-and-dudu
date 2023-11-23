@@ -94,7 +94,7 @@ export default function ImageDropzone({selectedImages, setSelectedImages}:Props)
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                         >
-                          <img
+                          <Image
                             alt={`Image ${index}`}
                             image={image}
                             index={index}

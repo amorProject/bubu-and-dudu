@@ -32,12 +32,12 @@ export default function Navbar({ starsEnabled, setStarsEnabled, user }: Props) {
         ))}
       </div>
       <div className="flex justify-center items-center relative col-span-2 md:col-span-1">
-        <img className="absolute left-16 md:-left-4 animate-bounce hidden sm:block" src='/images/dudu.png' alt="dudu" height={64} width={50} />
+        <Image className="absolute left-16 md:-left-4 animate-bounce hidden sm:block" src='/images/dudu.png' alt="dudu" height={64} width={50} />
         <Button variant='ghost' className="hover:bg-background/80 text-lg">
           Bubu and Dudu Time
         </Button>
         <Heart className="-top-5 absolute text-primary hidden xl:block" />
-        <img className="absolute right-16 md:-right-4 animate-bounce hidden sm:block" src='/images/bubu.png' alt="bubu" height={64} width={50} />
+        <Image className="absolute right-16 md:-right-4 animate-bounce hidden sm:block" src='/images/bubu.png' alt="bubu" height={64} width={50} />
       </div>
       <div className="justify-end items-center gap-x-2 hidden md:flex">
         <Tooltip>
