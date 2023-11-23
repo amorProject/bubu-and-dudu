@@ -1,7 +1,10 @@
-import { useCallback, useState, useRef } from 'react';
+// @ts-nocheck
+
+import { useCallback, useRef, useState } from 'react';
 import { useDropzone } from "@uploadthing/react/hooks";
 import Image from './dropzone-image';
 import { Button } from './ui/button';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface Props {
   selectedImages: File[];
@@ -10,10 +13,10 @@ interface Props {
 
 export default function ImageDropzone({selectedImages, setSelectedImages}:Props) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    // @ts-ignore
     setSelectedImages((prevImages: any) => [...prevImages, ...acceptedFiles]);
   }, []);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: true, noClick: true  });
 
@@ -30,9 +33,28 @@ export default function ImageDropzone({selectedImages, setSelectedImages}:Props)
   function handleFileInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const files = event.target.files;
     if (files) {
-      // @ts-ignore
       setSelectedImages((prevImages: any) => [...prevImages, ...Array.from(files)]);
     }
+  }
+
+  function handleDragStart() {
+    setIsDeleting(true);
+  }
+
+  function handleDragEnd(result: any) {
+    setIsDeleting(false);
+
+    if (!result.destination) {
+      // Remove the image if it is dragged out of the dropzone
+      const removedIndex = result.source.index;
+      setSelectedImages(selectedImages.filter((_, i) => i !== removedIndex));
+      return;
+    }
+
+    const items = Array.from(selectedImages);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setSelectedImages(items);
   }
 
   return (
@@ -42,28 +64,50 @@ export default function ImageDropzone({selectedImages, setSelectedImages}:Props)
         isDragActive ? 'border-white text-white' : 'text-muted-foreground'
       }`}
     >
-        <input {...getInputProps()} />
-        <Button onClick={handleFileSelect} disabled={isDragActive}>Select Files</Button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          multiple
-          onChange={handleFileInputChange}
-        />
+      <input {...getInputProps()} />
+      <Button onClick={handleFileSelect} disabled={isDragActive}>Select Files</Button>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        multiple
+        onChange={handleFileInputChange}
+      />
 
-      <div className="flex max-w-lg overflow-x-auto">
+      <div className="flex max-w-lg overflow-x-auto whitespace-nowrap overflow-y-hidden">
         {selectedImages.length > 0 ? (
-          <div className="flex gap-4 pb-8 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-card-foreground">
-            {selectedImages.map((image, index) => (
-              <Image
-                key={index}
-                image={image}
-                index={index}
-                handleDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <Droppable droppableId="imageList">
+              {(provided) => (
+                <div
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  className={`flex gap-4 pb-8 scrollbar-thin justify-center scrollbar-track-transparent scrollbar-thumb-card-foreground whitespace-nowrap overflow-y-hidden w-full min-w-[325px] px-8 ${
+                    isDeleting ? 'border border-destructive' : ''
+                  }`}
+                >
+                  {selectedImages.map((image, index) => (
+                    <Draggable key={index} draggableId={`image-${index}`} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <Image
+                            image={image}
+                            index={index}
+                            handleDelete={handleDelete}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         ) : (
           <p className="flex flex-col justify-center items-center">
             <span>

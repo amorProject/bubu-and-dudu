@@ -8,24 +8,40 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id         Int       @id @default(autoincrement())
-  title      String
-  images     Image[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  Category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId Int?
-
-  @@index([categoryId])
-}
-
-model Category {
+model User {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
+  username  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   posts     Post[]
+  images    Image[]
+
+  downloads  Int?   @default(0)
+  likedImages Image[] @relation("likedImages")
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  title      String
+  images     Image[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  categories Category[]
+  User       User?      @relation(fields: [userId], references: [id])
+  userId     Int?
+  views      Int?       @default(0)
+
+  @@index([userId])
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  posts       Post[]
 }
 
 model Image {
@@ -35,6 +51,11 @@ model Image {
   createdAt DateTime @default(now())
   postId    Int?
   post      Post?    @relation(fields: [postId], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  downloads Int?     @default(0)
+  likedBy   User[]   @relation("likedImages")
 
   @@index([postId])
+  @@index([userId])
 }

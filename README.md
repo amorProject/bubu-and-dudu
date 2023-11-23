@@ -7,9 +7,8 @@
 ## TODO
 #### [✓] Downloading
 #### [-] Different Displaying
-#### [-] Inputting Username
-#### [-] Converting to Database
-#### [X] Authentication
+#### [✓] Converting to Database
+#### [✓] Authentication
 #### [-] Adding Your Own Images
 #### [X] Add More Themes
 #### [X] Add Custom Themes
