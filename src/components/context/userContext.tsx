@@ -1,30 +1,27 @@
 import { Profile } from '@/lib/auth';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface UserContextProps {
   user: Profile | null;
   setUser: React.Dispatch<React.SetStateAction<Profile | null>>;
 }
 
-export const UserContext = createContext<UserContextProps>({
-  user: null,
-  setUser: () => {},
-});
+const UserContext = createContext<UserContextProps | null>(null);
 
-interface ProviderProps {
-  children?: React.ReactNode;
-}
-
-export function UserProvider({children}: ProviderProps) {
+export const UserProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<Profile | null>(null);
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );
+};
+
+export const useUser = (): UserContextProps => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
 };

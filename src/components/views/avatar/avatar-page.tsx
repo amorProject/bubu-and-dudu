@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Category, ProfilePicture } from "@/lib/images"
 import { List, PhoneCall, PhoneIncoming } from "lucide-react"
-import UserAvatar from "@/components/user-avatar"
-import { UserVoiceCallList } from "@/components/user-voice-call"
+import UserAvatar from "@/components/views/avatar/user-avatar"
+import { UserVoiceCallList } from "@/components/views/avatar/user-voice-call"
 import CategorySettings from "@/components/settings"
 import { BarLoader } from "react-spinners"
 import { Profile } from "@/lib/auth"
 import { useToast } from "@/components/ui/use-toast"
+import CreateModal from "./create-modal"
+import { useRouter, useSearchParams } from "next/navigation"
 
 const views = [
   { name: 'VC', icon: <PhoneCall /> },
@@ -23,6 +25,8 @@ interface Props {
 }
 
 export default function AvatarPage({user, setUser}: Props) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const { toast } = useToast()
   const [currentImage, setCurrentImage] = useState<ProfilePicture | null>(null)
   const [totalImages, setTotalImages] = useState<{ postCount: number, filteredPostCount: number }>({ postCount: 0, filteredPostCount: 0 })
@@ -31,18 +35,28 @@ export default function AvatarPage({user, setUser}: Props) {
   const [users, setUsers] = useState<string[]>(["", ""])
   const [loading, setLoading] = useState<boolean>(false)
 
+  const id = searchParams.get('id') || undefined;
+
   useEffect(() => {
     async function getImageTotals() {
       const totalImages = await fetch(`/api/post/count`).then((res) => res.json());
       setTotalImages({ postCount: totalImages.postCount, filteredPostCount: totalImages.postCount });
     }
+
+    async function getPost() {
+      const post = await fetch(`/api/post?id=${id}`).then((res) => res.json());
+      setCurrentImage(post);
+    }
+    
     getImageTotals();
+    if (id) getPost();
   }, [])
 
   async function handleSelect() {
     setLoading(true);
     const randomImage = await fetch(`/api/post/random?filters=${selected.map(s => s.id).join(',')}`).then((res) => res.json());
     setCurrentImage(randomImage);
+    router.replace(`?id=${randomImage.id}`)
     setLoading(false);
   }
 
@@ -98,6 +112,7 @@ export default function AvatarPage({user, setUser}: Props) {
           setSelected={setSelected}
           totalImages={totalImages}
         />
+        <CreateModal user={user} />
       </div>
       {currentImage &&
         <div className="flex flex-col">

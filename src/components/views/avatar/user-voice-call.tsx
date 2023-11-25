@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProfilePicture } from "@/lib/images";
 import { Dispatch, SetStateAction, useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../../ui/button";
 import { saveAs } from "file-saver";
 import { DownloadIcon } from "lucide-react";
 

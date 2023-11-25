@@ -1,13 +1,13 @@
 "use client"
 
-import AvatarPage from "@/components/avatar-page"
-import { UserContext } from "@/components/context/userContext";
+import { useUser } from "@/components/context/userContext";
 import { Button } from "@/components/ui/button";
-import { Profile } from "@/lib/auth";
-import { useContext, useEffect, useState } from "react"
+import AvatarPage from "@/components/views/avatar/avatar-page";
+import { useState } from "react"
+import { useSearchParams } from 'next/navigation'
 
 export default function Page() {
-  const { user, setUser } = useContext(UserContext)
+  const { user, setUser } = useUser()
   // 1: Avatar, 2: Status, 3: Wallpaper
   const [view, setView] = useState<number>(1)
   return (

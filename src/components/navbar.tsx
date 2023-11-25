@@ -7,14 +7,27 @@ import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { signIn, signOut } from "next-auth/react";
 import { Profile } from "@/lib/auth";
+import { useUser } from "./context/userContext";
+import { useEffect } from "react";
 
 interface Props {
   starsEnabled: boolean;
   setStarsEnabled: (enabled: boolean) => void;
-  user: Profile | null
 }
 
-export default function Navbar({ starsEnabled, setStarsEnabled, user }: Props) {
+export default function Navbar({ starsEnabled, setStarsEnabled }: Props) {
+  const { user, setUser } = useUser()
+
+  useEffect(() => {
+    async function fetchUser() {
+      const response = await fetch('/api/user');
+      const data = await response.json();
+      setUser(data.error ? null : data);
+    }
+  
+    fetchUser();
+  }, []);
+
   const socials = [
     { name: 'Github', logo: <Github />, link: 'https://github.com/amorProject/bubu-and-dudu'},
     { name: 'Discord', logo: <Discord />, link: 'https://discord.gg/sZ9fMqrmas'},

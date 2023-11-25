@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Button } from "./ui/button"
+import { Button } from "../../ui/button"
 import { Download, MicOff, ThumbsDown, ThumbsUp } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MoonLoader } from "react-spinners"
 import { saveAs } from "file-saver";
 import { ProfilePicture } from "@/lib/images"
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip"
 import { Image, Profile } from "@/lib/auth"
-import { useToast } from "./ui/use-toast"
+import { useToast } from "../../ui/use-toast"
 
 interface Props {
   user: Profile | null;
