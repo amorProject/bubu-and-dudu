@@ -2,14 +2,13 @@
 
 import Navbar from '@/components/navbar'
 import './globals.css'
-import type { Metadata } from 'next'
 import Disclaimer from '@/components/disclaimer'
 import Mouse from '@/components/mouse'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { SessionProvider } from "next-auth/react";
-import { Profile } from '@/lib/auth'
 import { Toaster } from '@/components/ui/toaster'
+import { UserContext, UserProvider } from '@/components/context/userContext'
 
 export default function RootLayout({
   children,
@@ -17,15 +16,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const [areStarsEnabled, setAreStarsEnabled] = useState<boolean>(true);
-  const [user, setUser] = useState<Profile | null>(null);
+  const { user, setUser } = useContext(UserContext)
 
   useEffect(() => {
-    fetch('/api/user')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) return;
-        setUser(data);
-      });
+    async function fetchUser() {
+      const response = await fetch('/api/user');
+      const data = await response.json();
+      setUser(data.error ? null : data);
+      console.log(user)
+    }
+  fetchUser()
   }, []);
 
   return (
@@ -59,7 +59,9 @@ function Providers({ children }: { children: React.ReactNode }) {
   return (
     <TooltipProvider>
       <SessionProvider>
-        {children}
+        <UserProvider>
+          {children}
+        </UserProvider>
       </SessionProvider>
     </TooltipProvider>
   )

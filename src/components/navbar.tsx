@@ -50,7 +50,7 @@ export default function Navbar({ starsEnabled, setStarsEnabled, user }: Props) {
             {starsEnabled ? 'Disable' : 'Enable'} Trail
           </TooltipContent>
         </Tooltip>
-        {!user ? (
+        {!user || user === null ? (
           <Button onClick={() => signIn("discord")}>
             Login
           </Button>

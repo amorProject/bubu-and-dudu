@@ -16,7 +16,7 @@ model User {
   posts     Post[]
   images    Image[]
 
-  downloads  Int?   @default(0)
+  downloads   Int?    @default(0)
   likedImages Image[] @relation("likedImages")
 }
 
@@ -35,13 +35,14 @@ model Post {
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
-  slug        String   @unique
-  title       String   @unique
+  id          Int          @id @default(autoincrement())
+  slug        String       @unique
+  title       String       @unique
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   posts       Post[]
+  StatusPost  StatusPost[]
 }
 
 model Image {
@@ -58,4 +59,36 @@ model Image {
 
   @@index([postId])
   @@index([userId])
+}
+
+model StatusPost {
+  id         Int        @id @default(autoincrement())
+  title      String
+  statuses   Status[]
+  categories Category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Status {
+  id               Int              @id @default(autoincrement())
+  title            String
+  url              String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  StatusPost       StatusPost?      @relation(fields: [statusPostId], references: [id])
+  statusPostId     Int?
+  StatusCategories StatusCategory[]
+
+  @@index([statusPostId])
+}
+
+model StatusCategory {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String
+  statuses  Status[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
