@@ -1,5 +1,5 @@
-import { ProfilePicture } from "@/lib/images"
-import { prisma } from "@/lib/utils"
+import { Image } from "@/lib/images"
+import { prisma } from "@/lib/utils";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
   if (!post) return Response.json({ error: "No post found" }, { status: 404 })
 
-  const data: ProfilePicture = {
+  const data: Image = {
     id: post.id,
     name: post.title,
     categories: post.categories.map((category) => category.slug),

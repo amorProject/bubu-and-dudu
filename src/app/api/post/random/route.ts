@@ -1,5 +1,5 @@
-import { ProfilePicture } from "@/lib/images"
-import { prisma } from "@/lib/utils"
+import { Image } from "@/lib/images"
+import { prisma } from "@/lib/utils";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
     }
   })
 
-  const data: ProfilePicture = {
+  const data: Image = {
     id: post.id,
     name: post.title,
     categories: post.categories.map((category) => category.slug),

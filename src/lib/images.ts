@@ -4,7 +4,7 @@ export type Category = {
   description: string,
 }
 
-export type ProfilePicture = {
+export type Image = {
   id?: number,
   name: string,
   categories: string[],

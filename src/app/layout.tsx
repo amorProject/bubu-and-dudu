@@ -9,14 +9,13 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from '@/components/ui/toaster'
 import { UserProvider, useUser } from '@/components/context/userContext'
+import { SettingsProvider } from '@/components/context/settingsContext'
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [areStarsEnabled, setAreStarsEnabled] = useState<boolean>(true);
-
   return (
     <Providers>
       <html lang="en">
@@ -31,13 +30,13 @@ export default function RootLayout({
           <meta name="viewport" content="width=device-width, initial-scale=1" />
         </head>
         <body style={{ overflow: "hidden" }}>
-            {areStarsEnabled && ( <Mouse /> )}
-            <Disclaimer />
-            <div className="w-screen h-screen overflow-hidden p-4 flex justify-center items-center">
-              {children}
-            </div>
-            <Navbar starsEnabled={areStarsEnabled} setStarsEnabled={setAreStarsEnabled} />
-            <Toaster />
+          <Mouse />
+          <Disclaimer />
+          <div className="w-screen h-screen overflow-hidden p-4 flex justify-center items-center">
+            {children}
+          </div>
+          <Navbar />
+          <Toaster />
         </body>
       </html>
     </Providers>
@@ -49,7 +48,9 @@ function Providers({ children }: { children: React.ReactNode }) {
     <TooltipProvider>
       <SessionProvider>
         <UserProvider>
-          {children}
+          <SettingsProvider>
+            {children}
+          </SettingsProvider>
         </UserProvider>
       </SessionProvider>
     </TooltipProvider>

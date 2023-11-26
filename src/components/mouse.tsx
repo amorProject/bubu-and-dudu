@@ -1,6 +1,7 @@
-import { Sparkle } from "lucide-react";
+import { Heart, Sparkle } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
+import { MouseTrailSettings, useSettings } from "./context/settingsContext";
 
 interface Position {
   x: number;
@@ -60,28 +61,42 @@ const calcDistance = (a: Position, b: Position): number => {
 
 const calcElapsedTime = (start: number, end: number): number => end - start;
 
-const createStar = (position: Position, count: number): JSX.Element => {
+const createTrailObject = (position: Position, count: number, shape: MouseTrailSettings["shape"]): JSX.Element => {
   const color = selectRandom(config.colors);
 
-  return (
-    <Sparkle
-      fill={color}
-      key={uuid()}
-      className="star"
-      style={{
-        left: px(position.x),
-        top: px(position.y),
-        fontSize: selectRandom(config.sizes),
-        color: `rgb(${color})`,
-        textShadow: `0px 0px 1.5rem rgb(${color} / 0.5)`,
-        animationName: config.animations[count % 3],
-        animationDuration: ms(config.starAnimationDuration),
-      }}
-    ></Sparkle>
-  );
+  const trailProps = {
+    key: uuid(),
+    className: "star hidden lg:block",
+    style: {
+      left: px(position.x),
+      top: px(position.y),
+      fontSize: selectRandom(config.sizes),
+      color: `rgb(${color})`,
+      textShadow: `0px 0px 1.5rem rgb(${color} / 0.5)`,
+      animationName: config.animations[count % 3],
+      animationDuration: ms(config.starAnimationDuration),
+      fill: `rgb(${color})`,
+    },
+  };
+
+  let newShape: JSX.Element;
+
+  if (shape === "stars") {
+    newShape = <Sparkle {...trailProps} />;
+  } else if (shape === "hearts") {
+    newShape = <Heart {...trailProps} />;
+  } else {
+    newShape = <Sparkle {...trailProps} />;
+  }
+
+  return newShape;
 };
 
 export default function Mouse() {
+  const { settings: { mouseTrail }} = useSettings()
+
+  if (!mouseTrail.enabled) return null;
+
   const [lastStar, setLastStar] = useState<LastStar>({
     starTimestamp: new Date().getTime(),
     starPosition: originPosition,
@@ -132,7 +147,7 @@ export default function Mouse() {
         config.minimumTimeBetweenStars;
 
       if (hasMovedFarEnough || hasBeenLongEnough) {
-        const newStar = createStar(mousePosition, lastStar.count);
+        const newStar = createTrailObject(mousePosition, lastStar.count, mouseTrail.shape);
         setLastStar((prevState) => ({
           ...prevState,
           count: prevState.count + 1,

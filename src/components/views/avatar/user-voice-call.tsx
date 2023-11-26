@@ -1,11 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ProfilePicture } from "@/lib/images";
+import { Image } from "@/lib/images";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "../../ui/button";
 import { saveAs } from "file-saver";
 import { DownloadIcon } from "lucide-react";
 
-export function UserVoiceCall({user, i, selected, onChange}:{user: string, i: number, selected: ProfilePicture | null, onChange: (value: string, num: number) => void}) {
+export function UserVoiceCall({user, i, selected, onChange}:{user: string, i: number, selected: Image | null, onChange: (value: string, num: number) => void}) {
   const [hovered, setHovered] = useState<boolean>(false)
 
   function saveFile() {
@@ -46,7 +46,7 @@ function UserNameInput({user, i, onChange}:{user: string, i: number, onChange: (
   )
 }
 
-export function UserVoiceCallList({selected, users, setUsers}:{selected: ProfilePicture | null, users: string[], setUsers: Dispatch<SetStateAction<string[]>>}) {
+export function UserVoiceCallList({selected, users, setUsers}:{selected: Image | null, users: string[], setUsers: Dispatch<SetStateAction<string[]>>}) {
   function handleUserNameChange(index: number, value: string) {
     const updatedUserNames = [...users];
     updatedUserNames[index] = value;

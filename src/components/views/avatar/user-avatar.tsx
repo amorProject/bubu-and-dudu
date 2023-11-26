@@ -4,7 +4,7 @@ import { Download, MicOff, ThumbsDown, ThumbsUp } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { MoonLoader } from "react-spinners"
 import { saveAs } from "file-saver";
-import { ProfilePicture } from "@/lib/images"
+import { Image } from "@/lib/images"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip"
 import { Image, Profile } from "@/lib/auth"
 import { useToast } from "../../ui/use-toast"
@@ -13,7 +13,7 @@ interface Props {
   user: Profile | null;
   setUser: Dispatch<SetStateAction<Profile | null>>;
   i: number;
-  selected: ProfilePicture;
+  selected: Image;
 }
 
 export default function UserAvatar({user, i, selected, setUser}: Props) {

@@ -1,22 +1,18 @@
 'use client'
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { Github, Star, StarOff } from "lucide-react"
+import { Github, Sparkle, Star, StarOff } from "lucide-react"
 import { Discord, Heart } from "./logos";
 import Image from "next/image";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { signIn, signOut } from "next-auth/react";
-import { Profile } from "@/lib/auth";
 import { useUser } from "./context/userContext";
 import { useEffect } from "react";
+import { MouseTrailSettings, useSettings } from "./context/settingsContext";
 
-interface Props {
-  starsEnabled: boolean;
-  setStarsEnabled: (enabled: boolean) => void;
-}
-
-export default function Navbar({ starsEnabled, setStarsEnabled }: Props) {
+export default function Navbar() {
   const { user, setUser } = useUser()
+  const { settings: { mouseTrail }, setSettings } = useSettings()
 
   useEffect(() => {
     async function fetchUser() {
@@ -27,6 +23,26 @@ export default function Navbar({ starsEnabled, setStarsEnabled }: Props) {
   
     fetchUser();
   }, []);
+
+  function toggleTrail() {
+    setSettings((prev) => ({
+      ...prev,
+      mouseTrail: {
+        enabled: !prev.mouseTrail.enabled,
+        shape: prev.mouseTrail.shape
+      }
+    }))
+  }
+
+  function toggleTrailShape() {
+    setSettings((prev) => ({
+      ...prev,
+      mouseTrail: {
+        enabled: prev.mouseTrail.enabled,
+        shape: prev.mouseTrail.shape === "hearts" ? "stars" : "hearts"
+      }
+    }))
+  }
 
   const socials = [
     { name: 'Github', logo: <Github />, link: 'https://github.com/amorProject/bubu-and-dudu'},
@@ -53,14 +69,17 @@ export default function Navbar({ starsEnabled, setStarsEnabled }: Props) {
         <Image className="absolute right-16 md:-right-4 animate-bounce hidden sm:block" src='/images/bubu.png' alt="bubu" height={64} width={50} />
       </div>
       <div className="justify-end items-center gap-x-2 hidden md:flex">
+        <Button size='icon' variant="outline" className="bg-secondary hover:bg-primary transition-colors duration-150" onClick={toggleTrailShape}>
+          {mouseTrail.shape === "stars" ? <Sparkle /> : <Heart />}
+        </Button>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button size='icon' variant="outline" className="bg-secondary hover:bg-primary transition-colors duration-150" onClick={() => setStarsEnabled(!starsEnabled)}>
-              {starsEnabled ? <Star /> : <StarOff />}
+            <Button size='icon' variant="outline" className="bg-secondary hover:bg-primary transition-colors duration-150" onClick={toggleTrail}>
+              {mouseTrail.enabled ? <Star /> : <StarOff />}
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {starsEnabled ? 'Disable' : 'Enable'} Trail
+            {mouseTrail.enabled ? 'Disable' : 'Enable'} Trail
           </TooltipContent>
         </Tooltip>
         {!user || user === null ? (

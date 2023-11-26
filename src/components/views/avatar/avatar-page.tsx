@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Category, ProfilePicture } from "@/lib/images"
+import { Category, Image as Image } from "@/lib/images"
 import { List, PhoneCall, PhoneIncoming } from "lucide-react"
 import UserAvatar from "@/components/views/avatar/user-avatar"
 import { UserVoiceCallList } from "@/components/views/avatar/user-voice-call"
@@ -28,14 +28,26 @@ export default function AvatarPage({user, setUser}: Props) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { toast } = useToast()
-  const [currentImage, setCurrentImage] = useState<ProfilePicture | null>(null)
+  const [currentImage, setCurrentImage] = useState<Image | null>(null)
   const [totalImages, setTotalImages] = useState<{ postCount: number, filteredPostCount: number }>({ postCount: 0, filteredPostCount: 0 })
   const [selected, setSelected] = useState<Category[]>([]);
   const [view, setView] = useState<0 | 1 | 2>(0)
   const [users, setUsers] = useState<string[]>(["", ""])
   const [loading, setLoading] = useState<boolean>(false)
 
+  const type = searchParams.get('type') || undefined;
   const id = searchParams.get('id') || undefined;
+
+  function setMetadata(post: Image) {
+    document.title = `${post.name} - Bubu & Dudu Time`
+    document.querySelector('meta[name="description"]')?.setAttribute('content', `Bubu & Dudu Time - ${post.name}`)
+    document.querySelector('meta[name="og:title"]')?.setAttribute('content', `${post.name} - Bubu & Dudu Time`)
+    document.querySelector('meta[name="og:description"]')?.setAttribute('content', `Bubu & Dudu Time - ${post.name}`)
+    document.querySelector('meta[name="og:image"]')?.setAttribute('content', post.images[0].url)
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${post.name} - Bubu & Dudu Time`)
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', `Bubu & Dudu Time - ${post.name}`)
+    document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', post.images[0].url)
+  }
 
   useEffect(() => {
     async function getImageTotals() {
@@ -44,19 +56,22 @@ export default function AvatarPage({user, setUser}: Props) {
     }
 
     async function getPost() {
-      const post = await fetch(`/api/post?id=${id}`).then((res) => res.json());
+      const post: Image = await fetch(`/api/post?id=${id}`).then((res) => res.json());
       setCurrentImage(post);
+      setMetadata(post);
     }
     
     getImageTotals();
     if (id) getPost();
+    if (!type) router.replace(`?type=1`)
   }, [])
 
   async function handleSelect() {
     setLoading(true);
-    const randomImage = await fetch(`/api/post/random?filters=${selected.map(s => s.id).join(',')}`).then((res) => res.json());
+    const randomImage: Image = await fetch(`/api/post/random?filters=${selected.map(s => s.id).join(',')}`).then((res) => res.json());
     setCurrentImage(randomImage);
-    router.replace(`?id=${randomImage.id}`)
+    setMetadata(randomImage);
+    router.replace(`?type=1&id=${randomImage.id}`)
     setLoading(false);
   }
 
