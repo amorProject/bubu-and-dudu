@@ -92,8 +92,6 @@ const createTrailObject = (position: Position, count: number, shape: MouseTrailS
 export default function Mouse() {
   const { settings: { mouseTrail }} = useSettings()
 
-  if (!mouseTrail.enabled || mouseTrail.hidden) return null;
-
   const [lastStar, setLastStar] = useState<LastStar>({
     starTimestamp: new Date().getTime(),
     starPosition: originPosition,
@@ -130,7 +128,8 @@ export default function Mouse() {
       }
     };
     
-    if (!mouseTrail.enabled) return;
+    if (!mouseTrail.enabled || mouseTrail.hidden) return;
+
     const handleMouseMove = (e: MouseEvent): void => {
       const mousePosition: Position = { x: e.clientX, y: e.clientY };
 
@@ -170,6 +169,8 @@ export default function Mouse() {
       document.body.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [lastStar, mouseTrail]);
+
+  if (!mouseTrail.enabled || mouseTrail.hidden) return null;
 
   return <div>{glowPoints}</div>;
 }
