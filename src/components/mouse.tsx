@@ -97,12 +97,12 @@ export default function Mouse() {
 
   if (!mouseTrail.enabled) return null;
 
-  const [lastStar, setLastStar] = useState<LastStar>({
+  const [lastStar, setLastStar] = useState<LastStar>(() => ({
     starTimestamp: new Date().getTime(),
     starPosition: originPosition,
     mousePosition: originPosition,
     count: 0,
-  });
+  }));
   const [glowPoints, setGlowPoints] = useState<JSX.Element[]>([]);
 
   const updateLastStar = (position: Position): void => {
@@ -120,21 +120,21 @@ export default function Mouse() {
     }));
   };
 
-  const adjustLastMousePosition = (position: Position): void => {
-    if (
-      lastStar.mousePosition.x === 0 &&
-      lastStar.mousePosition.y === 0
-    ) {
-      setLastStar((prevState) => ({
-        ...prevState,
-        mousePosition: position,
-      }));
-    }
-  };
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent): void => {
       const mousePosition: Position = { x: e.clientX, y: e.clientY };
+
+      const adjustLastMousePosition = (position: Position): void => {
+        if (
+          lastStar.mousePosition.x === 0 &&
+          lastStar.mousePosition.y === 0
+        ) {
+          setLastStar((prevState) => ({
+            ...prevState,
+            mousePosition: position,
+          }));
+        }
+      };
 
       adjustLastMousePosition(mousePosition);
 
@@ -171,7 +171,7 @@ export default function Mouse() {
       window.removeEventListener("mousemove", handleMouseMove);
       document.body.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [lastStar, mouseTrail.shape, adjustLastMousePosition]);
+  }, [lastStar, mouseTrail.shape]);
 
   return <div>{glowPoints}</div>;
 }
