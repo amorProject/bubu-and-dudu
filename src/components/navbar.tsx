@@ -12,7 +12,7 @@ import { useSettings } from "./context/settingsContext";
 
 export default function Navbar() {
   const { user, setUser } = useUser()
-  const { settings: { mouseTrail }, setSettings } = useSettings()
+  const { toggleMouseTrail, setSettings, settings: { mouseTrail } } = useSettings()
 
   async function fetchUser() {
     const response = await fetch('/api/user');
@@ -25,21 +25,15 @@ export default function Navbar() {
   }, []);
 
   function toggleTrail() {
-    setSettings((prev) => ({
-      ...prev,
-      mouseTrail: {
-        enabled: !prev.mouseTrail.enabled,
-        shape: prev.mouseTrail.shape
-      }
-    }))
+    toggleMouseTrail('toggle', 'toggle')
   }
 
   function toggleTrailShape() {
     setSettings((prev) => ({
       ...prev,
       mouseTrail: {
-        enabled: prev.mouseTrail.enabled,
-        shape: prev.mouseTrail.shape === "hearts" ? "stars" : "hearts"
+        ...prev.mouseTrail,
+        shape: prev.mouseTrail.shape === "hearts" ? "stars" : "hearts",
       }
     }))
   }
