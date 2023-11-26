@@ -6,7 +6,7 @@ import { MoonLoader } from "react-spinners"
 import { saveAs } from "file-saver";
 import { Image } from "@/lib/images"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip"
-import { Image, Profile } from "@/lib/auth"
+import { Profile } from "@/lib/auth"
 import { useToast } from "../../ui/use-toast"
 
 interface Props {
