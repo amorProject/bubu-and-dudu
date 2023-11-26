@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Category, Image as Image } from "@/lib/images"
+import { Category, Image } from "@/lib/images"
 import { List, PhoneCall, PhoneIncoming } from "lucide-react"
 import UserAvatar from "@/components/views/avatar/user-avatar"
 import { UserVoiceCallList } from "@/components/views/avatar/user-voice-call"
