@@ -42,6 +42,8 @@ export default function ImageContextMenu({image, index, handleDelete}:{image: Fi
 function ImageTrigger({image, index, handleDelete}:{image: File, index: number, handleDelete: (index: number) => void}) {
   return (
     <img
+      id={`image-${index}`}
+      draggable={false}
       onClick={() => handleDelete(index)}
       key={index}
       src={URL.createObjectURL(image)}

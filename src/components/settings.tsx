@@ -7,6 +7,7 @@ import Card from "./card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Badge } from "./ui/badge";
 import { useEffect, useState } from "react";
+import { Settings, useSettings } from "./context/settingsContext";
 
 interface Props {
   selected: Category[];
@@ -16,6 +17,7 @@ interface Props {
 
 export default function CategorySettings({ selected, setSelected, totalImages }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
+  const { toggleMouseTrail } = useSettings();
 
   useEffect(() => {
     async function getCategories() {
@@ -35,8 +37,12 @@ export default function CategorySettings({ selected, setSelected, totalImages }:
 
   const isSelected = (category: Category) => selected.includes(category);
 
+  function handleOpenChange(active: boolean) {
+    toggleMouseTrail('hide', active)
+  }
+
   return (
-    <Dialog>
+    <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" className="bg-secondary hover:bg-primary transition-colors duration-150 rounded-[4px] h-8 w-8 p-0">
           <SettingsIcon />

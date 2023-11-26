@@ -74,7 +74,7 @@ export default function UserAvatar({user, i, selected, setUser}: Props) {
     setUser(newData)
 
     toast({
-      title: 'Image Liked',
+      title: `Image ${newData.likedImages.filter(img => img.id === image.id).length >= 1 ? 'Liked' : 'Unliked'}`,
       description: `You ${newData.likedImages.filter(img => img.id === image.id).length >= 1 ? 'liked' : 'unliked'} ${image.title}`,
     })
 

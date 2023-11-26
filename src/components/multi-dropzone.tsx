@@ -74,41 +74,17 @@ export default function ImageDropzone({selectedImages, setSelectedImages}:Props)
         onChange={handleFileInputChange}
       />
 
-      <div className="flex max-w-lg overflow-x-auto whitespace-nowrap overflow-y-hidden">
+      <div className="flex max-w-lg overflow-x-auto whitespace-nowrap overflow-y-hidden gap-1">
         {selectedImages.length > 0 ? (
-          <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <Droppable droppableId="imageList">
-              {(provided) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className={`flex gap-4 pb-8 scrollbar-thin justify-center scrollbar-track-transparent scrollbar-thumb-card-foreground whitespace-nowrap overflow-y-hidden w-full min-w-[325px] px-8 ${
-                    isDeleting ? 'border border-destructive' : ''
-                  }`}
-                >
-                  {selectedImages.map((image, index) => (
-                    <Draggable key={index} draggableId={`image-${index}`} index={index}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <Image
-                            alt={`Image ${index}`}
-                            image={image}
-                            index={index}
-                            handleDelete={handleDelete}
-                          />
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+          selectedImages.map((image, index) => (
+            <Image
+              alt={`Image ${index}`}
+              key={index}
+              image={image}
+              index={index}
+              handleDelete={handleDelete}
+            />
+          ))
         ) : (
           <p className="flex flex-col justify-center items-center">
             Drag &apos;n&apos; drop some files here

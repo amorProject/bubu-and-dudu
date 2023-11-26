@@ -9,6 +9,7 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { Category } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Profile } from "@/lib/auth";
+import { useSettings } from "@/components/context/settingsContext";
 
 interface Props {
   user: Profile | null
@@ -17,6 +18,7 @@ interface Props {
 export default function CreateModal({user}: Props) {
   const { toast } = useToast() 
 
+  const { toggleMouseTrail } = useSettings()
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [title, setTitle] = useState<string>("");
   const [categories, setCategories] = useState<any[]>([]);
@@ -32,8 +34,8 @@ export default function CreateModal({user}: Props) {
   const { startUpload } = useUploadThing("uploadedAvatars");
 
   async function handleUpload() {
-    if (!user) return toast({ title: "You must be logged in to upload an avatar!" })
-    if (user.username != "yakisn0w" && user.username != ".fabra") return toast({ title: "You must be verified to upload an avatar!" })
+    if (!user) return toast({ title: "You must be logged in to upload an avatar!", variant: 'destructive' })
+    if (user.username != "yakisn0w" && user.username != ".fabra") return toast({ title: "You must be verified to upload an avatar!", variant: 'destructive' })
     if (selectedImages.length === 0 || !title || isUploading) return;
     let images: any = []
     setIsUploading(true);
@@ -66,8 +68,12 @@ export default function CreateModal({user}: Props) {
     })
   }
 
+  function handleOpenChange(active: boolean) {
+    toggleMouseTrail('hide', active)
+  }
+
   return (
-    <Dialog>
+    <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant='secondary' className="rounded-[4px] h-8 w-8" size='icon'>
           <Plus />

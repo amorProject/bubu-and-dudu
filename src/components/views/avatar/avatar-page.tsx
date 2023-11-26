@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Category, Image } from "@/lib/images"
-import { List, PhoneCall, PhoneIncoming } from "lucide-react"
+import { List, LucideEye, PhoneCall, PhoneIncoming } from "lucide-react"
 import UserAvatar from "@/components/views/avatar/user-avatar"
 import { UserVoiceCallList } from "@/components/views/avatar/user-voice-call"
 import CategorySettings from "@/components/settings"
@@ -12,7 +12,6 @@ import { Profile } from "@/lib/auth"
 import { useToast } from "@/components/ui/use-toast"
 import CreateModal from "./create-modal"
 import { useRouter, useSearchParams } from "next/navigation"
-import { setMetadata } from "@/lib/utils"
 
 const views = [
   { name: 'VC', icon: <PhoneCall /> },
@@ -22,10 +21,11 @@ const views = [
 
 interface Props {
   user: Profile | null;
-  setUser: Dispatch<SetStateAction<Profile | null>>
+  setUser: Dispatch<SetStateAction<Profile | null>>;
+  togglePage: () => void;
 }
 
-export default function AvatarPage({user, setUser}: Props) {
+export default function AvatarPage({user, setUser, togglePage}: Props) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -36,18 +36,16 @@ export default function AvatarPage({user, setUser}: Props) {
   const [users, setUsers] = useState<string[]>(["", ""])
   const [loading, setLoading] = useState<boolean>(false)
 
-  const type = searchParams.get('type') || undefined;
+  const typeParam = searchParams.get('type') || undefined;
+  const type = typeParam && parseInt(typeParam) || 0;
   const id = searchParams.get('id') || undefined;
 
   async function getPost() {
     if (!id) return;
+    setLoading(true);
     const post: Image = await fetch(`/api/post?id=${id}`).then((res) => res.json());
     setCurrentImage(post);
-    setMetadata(post);
-  }
-
-  function setDefaultURL() {
-    router.replace(`?type=1${id ? `&id=${id}` : ''}`)
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -60,13 +58,10 @@ export default function AvatarPage({user, setUser}: Props) {
     getPost();
   }, [])
   
-  if (!type) setDefaultURL()
-
   async function handleSelect() {
     setLoading(true);
     const randomImage: Image = await fetch(`/api/post/random?filters=${selected.map(s => s.id).join(',')}`).then((res) => res.json());
     setCurrentImage(randomImage);
-    setMetadata(randomImage);
     router.replace(`?type=1&id=${randomImage.id}`)
     setLoading(false);
   }
@@ -85,6 +80,7 @@ export default function AvatarPage({user, setUser}: Props) {
     toast({
       title: 'Coming Soon',
       description: 'This feature is coming soon!',
+      variant: 'destructive'
     })
     // setView((prevView) => (prevView === 2 ? 0 : (prevView + 1) as 0 | 1 | 2))
   }
@@ -112,6 +108,9 @@ export default function AvatarPage({user, setUser}: Props) {
         <UserVoiceCallList users={users} setUsers={setUsers} selected={currentImage} />
       }
       <div className="flex gap-x-2">
+        <Button variant='secondary' className="rounded-[4px] h-8 w-8" size='icon' onClick={togglePage}>
+          <LucideEye />
+        </Button>
         <Button variant='secondary' className="rounded-[4px] h-8 w-8" size='icon' onClick={handleView}>
           {views[view].icon}
         </Button>

@@ -5,9 +5,9 @@
 #### [✓] Converting to Database
 #### [✓] Authentication
 #### [✓] Disable trail for mobile
+#### [✓] Improve Metadata
+#### [✓] Implement setting changes
 ## [-] Working On
-#### [-] Implement setting changes
-#### [-] Improve Metadata
 #### [-] Different Displaying
 #### [-] Adding Your Own Images
 #### [-] Statuses
@@ -19,3 +19,8 @@
 #### [X] Enable login/logout for mobile
 #### [X] Organize categories
 #### [X] Change Category Name to "Human Hybrid"
+#### [X] Add More Settings
+#### [X] Add editing categories
+#### [X] Add editing posts
+#### [X] Add editing images
+#### [X] Create profiles
