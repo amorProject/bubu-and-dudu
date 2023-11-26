@@ -8,19 +8,19 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { signIn, signOut } from "next-auth/react";
 import { useUser } from "./context/userContext";
 import { useEffect } from "react";
-import { MouseTrailSettings, useSettings } from "./context/settingsContext";
+import { useSettings } from "./context/settingsContext";
 
 export default function Navbar() {
   const { user, setUser } = useUser()
   const { settings: { mouseTrail }, setSettings } = useSettings()
 
+  async function fetchUser() {
+    const response = await fetch('/api/user');
+    const data = await response.json();
+    setUser(data.error ? null : data);
+  }
+
   useEffect(() => {
-    async function fetchUser() {
-      const response = await fetch('/api/user');
-      const data = await response.json();
-      setUser(data.error ? null : data);
-    }
-  
     fetchUser();
   }, []);
 

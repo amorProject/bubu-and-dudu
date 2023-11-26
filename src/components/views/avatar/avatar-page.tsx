@@ -12,6 +12,7 @@ import { Profile } from "@/lib/auth"
 import { useToast } from "@/components/ui/use-toast"
 import CreateModal from "./create-modal"
 import { useRouter, useSearchParams } from "next/navigation"
+import { setMetadata } from "@/lib/utils"
 
 const views = [
   { name: 'VC', icon: <PhoneCall /> },
@@ -38,15 +39,15 @@ export default function AvatarPage({user, setUser}: Props) {
   const type = searchParams.get('type') || undefined;
   const id = searchParams.get('id') || undefined;
 
-  function setMetadata(post: Image) {
-    document.title = `${post.name} - Bubu & Dudu Time`
-    document.querySelector('meta[name="description"]')?.setAttribute('content', `Bubu & Dudu Time - ${post.name}`)
-    document.querySelector('meta[name="og:title"]')?.setAttribute('content', `${post.name} - Bubu & Dudu Time`)
-    document.querySelector('meta[name="og:description"]')?.setAttribute('content', `Bubu & Dudu Time - ${post.name}`)
-    document.querySelector('meta[name="og:image"]')?.setAttribute('content', post.images[0].url)
-    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${post.name} - Bubu & Dudu Time`)
-    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', `Bubu & Dudu Time - ${post.name}`)
-    document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', post.images[0].url)
+  async function getPost() {
+    if (!id) return;
+    const post: Image = await fetch(`/api/post?id=${id}`).then((res) => res.json());
+    setCurrentImage(post);
+    setMetadata(post);
+  }
+
+  function setDefaultURL() {
+    router.replace(`?type=1${id ? `&id=${id}` : ''}`)
   }
 
   useEffect(() => {
@@ -54,17 +55,12 @@ export default function AvatarPage({user, setUser}: Props) {
       const totalImages = await fetch(`/api/post/count`).then((res) => res.json());
       setTotalImages({ postCount: totalImages.postCount, filteredPostCount: totalImages.postCount });
     }
-
-    async function getPost() {
-      const post: Image = await fetch(`/api/post?id=${id}`).then((res) => res.json());
-      setCurrentImage(post);
-      setMetadata(post);
-    }
     
     getImageTotals();
-    if (id) getPost();
-    if (!type) router.replace(`?type=1`)
+    getPost();
   }, [])
+  
+  if (!type) setDefaultURL()
 
   async function handleSelect() {
     setLoading(true);
