@@ -102,34 +102,34 @@ export default function Mouse() {
   });
   const [glowPoints, setGlowPoints] = useState<JSX.Element[]>([]);
 
-  const updateLastStar = (position: Position): void => {
-    setLastStar((prevState) => ({
-      ...prevState,
-      starTimestamp: new Date().getTime(),
-      starPosition: position,
-    }));
-  };
-
-  const updateLastMousePosition = (position: Position): void => {
-    setLastStar((prevState) => ({
-      ...prevState,
-      mousePosition: position,
-    }));
-  };
-
-  const adjustLastMousePosition = (position: Position): void => {
-    if (
-      lastStar.mousePosition.x === 0 &&
-      lastStar.mousePosition.y === 0
-    ) {
+  useEffect(() => {
+    const updateLastStar = (position: Position): void => {
+      setLastStar((prevState) => ({
+        ...prevState,
+        starTimestamp: new Date().getTime(),
+        starPosition: position,
+      }));
+    };
+  
+    const updateLastMousePosition = (position: Position): void => {
       setLastStar((prevState) => ({
         ...prevState,
         mousePosition: position,
       }));
-    }
-  };
-
-  useEffect(() => {
+    };
+  
+    const adjustLastMousePosition = (position: Position): void => {
+      if (
+        lastStar.mousePosition.x === 0 &&
+        lastStar.mousePosition.y === 0
+      ) {
+        setLastStar((prevState) => ({
+          ...prevState,
+          mousePosition: position,
+        }));
+      }
+    };
+    
     if (!mouseTrail.enabled) return;
     const handleMouseMove = (e: MouseEvent): void => {
       const mousePosition: Position = { x: e.clientX, y: e.clientY };
@@ -169,7 +169,7 @@ export default function Mouse() {
       window.removeEventListener("mousemove", handleMouseMove);
       document.body.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [lastStar, mouseTrail, adjustLastMousePosition]);
+  }, [lastStar, mouseTrail]);
 
   return <div>{glowPoints}</div>;
 }
