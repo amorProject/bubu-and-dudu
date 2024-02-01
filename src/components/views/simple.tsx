@@ -31,7 +31,7 @@ export function SimpleView({ selected }: { selected?: Post | null }) {
     );
   }
 
-  if (!selected) {
+  if (!selected || !selected.id) {
     return (
       <Button size="lg" variant="accent" onClick={roll} disabled={isDisabled} className="flex justify-center items-center">
         {isLoading ? <ClipLoader size={16} color="white" /> : "Roll"}
@@ -47,7 +47,7 @@ export function SimpleView({ selected }: { selected?: Post | null }) {
             {generateText(selected.title, selected.id)}
           </CardTitle>
           <CardDescription>
-            {selected.categories.map((category, idx) => (
+            {selected.categories && selected.categories.length > 0 && selected.categories.map((category, idx) => (
               <Badge key={idx} variant="outline">
                 {category.name}
               </Badge>

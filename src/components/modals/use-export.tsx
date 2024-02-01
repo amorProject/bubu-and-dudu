@@ -12,9 +12,8 @@ import { useSession } from "next-auth/react"
 export function UseOnModal() {
   const [prevSelectedId, setPrevSelectedId] = useState<string>("")
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState<0 | 1 | 2>(0);
+  const [view, setView] = useState<1 | 2>(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
-  const [selectedType, setSelectedType] = useState<"bunnybazaar" | "bubuanddudu">("bubuanddudu");
   const { selected, isLoading } = useSelected();
   const { update } = useSession();
 
@@ -22,8 +21,7 @@ export function UseOnModal() {
     if (open && isLoading) {
       setOpen(false);
       setSelectedImageIndex(0);
-      setView(0);
-      setSelectedType("bubuanddudu");
+      setView(1);
     }
   }, [isLoading, open])
 
@@ -31,8 +29,7 @@ export function UseOnModal() {
     setOpen(!open);
     if (!open && selected?.id !== prevSelectedId) {
       setSelectedImageIndex(0);
-      setView(0);
-      setSelectedType("bubuanddudu");
+      setView(1);
       setPrevSelectedId(selected?.id || "");
     }
   }
@@ -40,16 +37,15 @@ export function UseOnModal() {
   if (!selected) return null;
 
   function handleNextUseButton() {
-    if (view === 0) return setView(1);
     if (view === 1) return setView(2);
 
-    async function setImageBunnyBazaar() {
+    async function setImage() {
       if (!selected) {
-        toast.error("There was an error while trying to use this image on Bunny Bazaar.")
+        toast.error("There was an error while trying to use this image.")
         return;
       };
 
-      await fetch(`/api/me/export/bunnybazaar`, {
+      await fetch(`/api/me/export`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -59,51 +55,19 @@ export function UseOnModal() {
         })
       }).then(async (res) => {
         if (res.ok) {
-          toast.success("Image was successfully applied on Bunny Bazaar.")
+          toast.success("Image was successfully applied!")
           setOpen(false);
         } else {
-          toast.error("There was an error while trying to use this image on Bunny Bazaar.")
+          toast.error("There was an error while trying to use this image.")
         }
       }).catch(() => {
-        toast.error("There was an error while trying to use this image on Bunny Bazaar.")
-      })
-    }
-    
-    if (selectedType === "bunnybazaar") {
-      setImageBunnyBazaar();
-    }
-
-    async function setImageBubuAndDudu() {
-      if (!selected) {
-        toast.error("There was an error while trying to use this image on Bubu & Dudu Time.")
-        return;
-      };
-
-      await fetch(`/api/me/export/bubuanddudu`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          image: selected.images[selectedImageIndex]
-        })
-      }).then(async (res) => {
-        if (res.ok) {
-          toast.success("Image was successfully applied to Bubu & Dudu Time.")
-          setOpen(false);
-        } else {
-          toast.error("There was an error while trying to use this image on Bubu & Dudu Time.")
-        }
-      }).catch(() => {
-        toast.error("There was an error while trying to use this image on Bubu & Dudu Time.")
+        toast.error("There was an error while trying to use this image.")
       })
       
       await update()
     }
     
-    if (selectedType === "bubuanddudu") {
-      setImageBubuAndDudu();
-    }
+    setImage();
   }
 
   return (
@@ -125,37 +89,12 @@ export function UseOnModal() {
             { view === 2 && ` - ${1 + selectedImageIndex}`}
           </DialogTitle>
           <DialogDescription>
-            { view === 0 && "Where would you like to use this image?"}
-            { view === 1 && `Which image would you like to use on ${selectedType === "bubuanddudu" ? "Bubu & Dudu Time" : "Bunny Bazaar"}?` }
-            { view === 2 && `Are you sure you want to use this image on ${selectedType === "bubuanddudu" ? "Bubu & Dudu Time" : "Bunny Bazaar"}?` }
+            { view === 1 && `Which image would you like to use?` }
+            { view === 2 && `Are you sure you want to use this image?` }
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex justify-center gap-x-2">
-          {view === 0 && (
-            <div className="flex  justify-center items-center gap-x-2">
-              <Button 
-                variant="nav-outline" 
-                onClick={() => {
-                  setSelectedType("bunnybazaar")
-                  setView(1)
-                }}
-                className="px-6 w-fit"
-              >
-                Bunny Bazaar
-              </Button>
-              <Button 
-                variant="nav-ghost" 
-                onClick={() => {
-                  setSelectedType("bubuanddudu")
-                  setView(1)
-                }}
-                className="px-6 w-fit"
-              >
-                Bubu & Dudu Time
-              </Button>
-            </div>
-          )}
           {view === 1 && selected.images.map((image, idx) => (
             <div 
               key={idx} 
@@ -198,13 +137,12 @@ export function UseOnModal() {
           <Button 
             variant="outline" 
             onClick={() => {
-              if (view === 0) return setOpen(false);
-              if (view === 1) return setView(0);
+              if (view === 1) return setOpen(false);
               if (view === 2) return setView(1);
             }}
             className="px-6 w-fit"
           >
-            { view === 0 ? "Cancel" : "Back"}
+            { view === 1 ? "Cancel" : "Back"}
           </Button>
           <Button 
             variant="accent" 

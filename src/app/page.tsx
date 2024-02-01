@@ -6,15 +6,8 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
-export async function generateMetadata({ searchParams }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const id = searchParams[''] as string | undefined;
-
-  if (!id) {
-    return {
-      title: 'Bubu \& Dudu Time - Loading',
-      description: 'Bubu & Dudu Time is a website to find matching profile pictures for you and your partners\/friends\.'
-    }
-  }
 
   const post = await db.post.findUnique({
     where: {
@@ -35,7 +28,7 @@ export async function generateMetadata({ searchParams }: Props, parent: Resolvin
         }
       }
     }
-  })
+  }).catch(() => null);
 
   if (!post) {
     return {

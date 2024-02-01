@@ -2,7 +2,7 @@
 
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Button } from './ui/button';
-import { Check, Copy } from 'lucide-react';
+import { Copy, CopyCheck } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -14,16 +14,17 @@ export function CopyButton({ copy, disabled }: CopyButtonProps) {
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
-    }, 750);
+    }, 1500);
   }
 
   return (
     <CopyToClipboard key={copy} text={copy} onCopy={onCopy}>
       <Button variant="outline" size="icon" className='relative group/check' disabled={disabled}>
-        {copied && (
-          <Check size={16} className='absolute -top-1 -right-1 h-4.5 w-4.5' />
+        {copied ? (
+          <CopyCheck size={16} />
+        ) : (
+          <Copy size={16} />
         )}
-        <Copy size={16} />
       </Button>
     </CopyToClipboard>
   )
