@@ -2,7 +2,7 @@ import { z } from 'zod';
 import db from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server';
 
-export const PostSchema = z.object({
+const PostSchema = z.object({
   id: z.string(),
   title: z.string(),
   author: z.object({
@@ -16,7 +16,7 @@ export const PostSchema = z.object({
     description: z.any(),
   }))
 });
-export type Post = z.infer<typeof PostSchema>;
+type Post = z.infer<typeof PostSchema>;
 
 export async function GET(req: NextRequest, res: NextResponse) {
   const pageQuery = req.nextUrl.searchParams.get("page");
