@@ -1,6 +1,6 @@
 "use client"
 
-import { Post } from "@/app/api/post/roll/route";
+import { Post } from "@/lib/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
