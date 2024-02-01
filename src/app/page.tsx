@@ -56,6 +56,12 @@ export async function generateMetadata({ searchParams }: Props, parent: Resolvin
         url: image.url
       })),
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} by ${post.author.name} - Bubu \& Dudu Time`,
+      description: `Find matching profile pictures for you and your partners\/friends\ on Bubu & Dudu Time\.`,
+      images: post.images.map(image => image.url),
+    }
   }
 }
 
