@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  createdAt    DateTime @default(now())
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            String             @id
+  email         String             @unique
+  image         UserImage?
+  name          String             @unique
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  sessions      Session[]
+  locations     LocationUser[]
+  organizations OrganizationUser[]
+
+  // BUBU AND DUDU
+  posts         Post[]
+}
+
+model UserImage {
+  id     String @id @default(uuid())
+  type   UserImageUploadType @default(UPLOADTHING)
+  url    String
+  key    String?
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+enum UserImageUploadType {
+  DEFAULT
+  UPLOADTHING
+  BUBUANDDUDU
+}
+
+model Location {
+  id           String               @id @unique @default(cuid())
+  name         String               @default("New Location")
+  dimension    LocationDimension    @default(Overworld)
+  coordinates  LocationCoordinates?
+  deliveryNote String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  users        LocationUser[]
+  invites      LocationInvite[]
+
+  @@unique([name, dimension])
+}
+
+model LocationCoordinates {
+  id       String    @id
+  location Location? @relation(fields: [id], references: [id])
+  x        Int
+  y        Int
+  z        Int
+}
+
+model LocationInvite {
+  id         String   @id @default(cuid())
+  email      String
+  token      String   @unique @default(uuid())
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model LocationUser {
+  id         String       @id @default(cuid())
+  userId     String
+  locationId String
+  nickname   String?
+  role       LocationRole @default(MEMBER)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  user       User         @relation(fields: [userId], references: [id])
+  location   Location     @relation(fields: [locationId], references: [id])
+}
+
+enum LocationDimension {
+  Overworld
+  Nether
+  End
+  Mining
+}
+
+enum LocationRole {
+  CREATOR
+  MEMBER
+}
+
+model Organization {
+  id        String               @id @default(cuid())
+  name      String               @unique
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+  members   OrganizationUser[]
+  invites   OrganizationInvite[]
+}
+
+model OrganizationInvite {
+  id             String       @id @default(cuid())
+  email          String
+  token          String       @unique @default(uuid())
+  accepted       Boolean      @default(false)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model OrganizationUser {
+  id             String           @id @default(cuid())
+  userId         String
+  organizationId String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  role           OrganizationRole @default(MEMBER)
+  user           User             @relation(fields: [userId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+// BUBU AND DUDU
+model Post {
+  id         String      @id @default(cuid())
+  title      String
+  images     PostImage[]
+  accepted   Boolean     @default(false)
+  authorId   String
+  author     User        @relation(fields: [authorId], references: [id])
+  categories Category[]
+}
+
+model PostImage {
+  id        String   @id @default(uuid())
+  url       String
+  key       String
+  createdAt DateTime @default(now())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+}
+
+model Category {
+  id          String   @id
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  posts       Post[]
+}
