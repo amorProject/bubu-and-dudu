@@ -8,7 +8,7 @@ import {
   useSpring,
 } from "framer-motion";
 import { SimpleAvatar } from "../views/avatar";
-import { Post } from "@/app/api/post/roll/route";
+import { Post } from "@/lib/types";
 
 export const AnimatedTooltip = ({
   item,
