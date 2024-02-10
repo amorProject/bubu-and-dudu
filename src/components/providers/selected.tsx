@@ -1,8 +1,9 @@
 "use client";
 
 import { Post } from "@/lib/types";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 
 const selectedContext = createContext<SelectedContext>({
   roll: () => {},
@@ -12,7 +13,6 @@ const selectedContext = createContext<SelectedContext>({
 
 export function SelectedProvider({ children }: SelectedProviderContext) {
   const router = useRouter();
-  const pathname = usePathname();
   const [nextRoll, setNextRoll] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -22,7 +22,7 @@ export function SelectedProvider({ children }: SelectedProviderContext) {
     setIsDisabled(true);
     if (nextRoll) router.replace(`/${nextRoll.id}`);
     setIsLoading(false);
-    const res = await fetch("/api/post/roll");
+    const res = await fetch(`/api/post/roll?rid=${uuid()}`);
     const data = await res.json();
     setNextRoll(data);
     setIsDisabled(false);
