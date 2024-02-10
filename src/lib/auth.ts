@@ -139,7 +139,7 @@ const Adapter: typeof PrismaAdapter = () => {
 
 export const authOptions = {
   providers: [ Discord ],
-  adapter: Adapter(db),
+  adapter: Adapter(db) as any,
   callbacks: {
     session: (params) => {
       // @ts-ignore
