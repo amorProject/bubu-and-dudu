@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import db from '@/lib/prisma'
+import db from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const PostSchema = z.object({
   id: z.string(),
@@ -10,11 +10,7 @@ const PostSchema = z.object({
     name: z.string(),
     image: z.any(),
   }),
-  categories: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.any(),
-  }))
+  categories: z.array(z.string())
 });
 type Post = z.infer<typeof PostSchema>;
 
@@ -44,13 +40,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             }
           }
         },
-        categories: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-          }
-        },
+        categories: true,
       },
       take: limit,
       skip: (page - 1) * limit

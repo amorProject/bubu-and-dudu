@@ -9,6 +9,7 @@ type PrismaSession = Prisma.SessionGetPayload<{
         id: true;
         name: true;
         email: true;
+        role: true;
         image: {
           select: {
             url: true;
@@ -24,6 +25,7 @@ type PrismaUser = Prisma.UserGetPayload<{
     id: true;
     name: true;
     email: true;
+    role: true;
     image: {
       select: {
         url: true;

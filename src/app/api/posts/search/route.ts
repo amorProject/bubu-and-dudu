@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import db from '@/lib/prisma'
+import db from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const PostSchema = z.object({
   id: z.string(),
@@ -10,11 +10,7 @@ const PostSchema = z.object({
     name: z.string(),
     image: z.any(),
   }),
-  categories: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    description: z.any(),
-  }))
+  categories: z.array(z.string())
 });
 type Post = z.infer<typeof PostSchema>;
 
@@ -25,7 +21,11 @@ export async function GET(req: NextRequest, res: NextResponse) {
   const searchQuery = decodeURI(req.nextUrl.searchParams.get("search") ?? "");
   var search = searchQuery && searchQuery.length >= 1 ? decodeURI(searchQuery) : undefined;
   const categoryQuery = req.nextUrl.searchParams.get("category");
-  var categories = categoryQuery ? categoryQuery.split(",") : "";
+  var categories = categoryQuery ? categoryQuery.split(",") : [];
+  if (!Array.isArray(categories) && categories) {
+    categories = [categories];
+  }
+
 
   try {
     const count = await db.post.count({
@@ -50,11 +50,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           },
           {
             categories: {
-              some: {
-                id: typeof categories === "string" ? categories : {
-                  in: categories
-                } 
-              }
+              hasSome: categories
             }
           }
         ]        
@@ -73,13 +69,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             }
           }
         },
-        categories: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-          }
-        },
+        categories: true
       },
       take: limit,
       skip: (page - 1) * limit

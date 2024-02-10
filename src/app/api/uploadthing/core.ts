@@ -1,14 +1,14 @@
-import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { auth } from "@/lib/auth";
 import db from "@/lib/prisma";
-import { UTApi } from "uploadthing/server";
 import { $Enums } from "@prisma/client";
+import { createUploadthing, type FileRouter } from "uploadthing/next";
+import { UTApi } from "uploadthing/server";
 
 const f = createUploadthing();
 const utapi = new UTApi();
   
 export const ourFileRouter = {
-  imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 4 } })
+  uploadedAvatars: f({ image: { maxFileSize: "4MB", maxFileCount: 4 } })
     .middleware(async () => {
       const session = await auth();
       if (!session || !session.user) {
@@ -46,7 +46,7 @@ export const ourFileRouter = {
       }
 
       if (metadata.oldImage && metadata.oldImage.type === $Enums.UserImageUploadType["UPLOADTHING"]) {
-        const res = await utapi.deleteFiles(metadata.oldImage.key);
+        await utapi.deleteFiles(metadata.oldImage.key);
       }
       
       await db.userImage.upsert({

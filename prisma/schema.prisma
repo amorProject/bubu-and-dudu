@@ -20,24 +20,31 @@ model User {
   id            String             @id
   email         String             @unique
   image         UserImage?
+  role          UserRole           @default(USER)
   name          String             @unique
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   sessions      Session[]
   locations     LocationUser[]
   organizations OrganizationUser[]
+  invites       LocationInvite[]
 
   // BUBU AND DUDU
-  posts         Post[]
+  posts Post[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
 
 model UserImage {
-  id     String @id @default(uuid())
+  id     String              @id @default(uuid())
   type   UserImageUploadType @default(UPLOADTHING)
   url    String
   key    String?
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  userId String              @unique
+  user   User                @relation(fields: [userId], references: [id])
 }
 
 enum UserImageUploadType {
@@ -62,7 +69,7 @@ model Location {
 
 model LocationCoordinates {
   id       String    @id
-  location Location? @relation(fields: [id], references: [id])
+  location Location? @relation(fields: [id], references: [id], onDelete: Cascade)
   x        Int
   y        Int
   z        Int
@@ -70,10 +77,11 @@ model LocationCoordinates {
 
 model LocationInvite {
   id         String   @id @default(cuid())
-  email      String
-  token      String   @unique @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accepted   Boolean  @default(false)
   locationId String
-  location   Location @relation(fields: [locationId], references: [id])
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -86,8 +94,10 @@ model LocationUser {
   role       LocationRole @default(MEMBER)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  user       User         @relation(fields: [userId], references: [id])
-  location   Location     @relation(fields: [locationId], references: [id])
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  location   Location     @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, locationId])
 }
 
 enum LocationDimension {
@@ -105,15 +115,26 @@ enum LocationRole {
 model Organization {
   id        String               @id @default(cuid())
   name      String               @unique
+  image     OrganizationImage?
   createdAt DateTime             @default(now())
   updatedAt DateTime             @updatedAt
   members   OrganizationUser[]
   invites   OrganizationInvite[]
 }
 
+model OrganizationImage {
+  id             String              @id @default(uuid())
+  type           UserImageUploadType @default(UPLOADTHING)
+  url            String              @default("https://utfs.io/f/794a5205-fee1-44bb-83b5-1fd22317c408-1zbfv.png")
+  key            String?
+  organizationId String              @unique
+  organization   Organization        @relation(fields: [organizationId], references: [id])
+}
+
 model OrganizationInvite {
   id             String       @id @default(cuid())
   email          String
+  emailId        String       @unique
   token          String       @unique @default(uuid())
   accepted       Boolean      @default(false)
   organizationId String
@@ -147,23 +168,16 @@ model Post {
   accepted   Boolean     @default(false)
   authorId   String
   author     User        @relation(fields: [authorId], references: [id])
-  categories Category[]
+  categories String[]
 }
 
 model PostImage {
   id        String   @id @default(uuid())
+  title     String?
   url       String
   key       String
   createdAt DateTime @default(now())
   postId    String
   post      Post     @relation(fields: [postId], references: [id])
-}
-
-model Category {
-  id          String   @id
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  posts       Post[]
+  sort      Int      @default(0)
 }

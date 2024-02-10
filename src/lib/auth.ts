@@ -1,7 +1,7 @@
-import NextAuth, { NextAuthConfig, User } from "next-auth"
-import Discord from "next-auth/providers/discord"
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import db from "@/lib/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import NextAuth, { NextAuthConfig } from "next-auth";
+import Discord from "next-auth/providers/discord";
 
 // @ts-ignore
 const Adapter: typeof PrismaAdapter = () => {
@@ -57,6 +57,7 @@ const Adapter: typeof PrismaAdapter = () => {
               id: true,
               name: true,
               email: true,
+              role: true,
               image: {
                 select: {
                   url: true,
